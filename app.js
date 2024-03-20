@@ -83,6 +83,18 @@ app.get('/user', verifyToken, (req, res) => {
   res.json(req.user);
 })
 
+// get marketplace data
+app.get('/marketplace', verifyToken, (req, res) => {
+  
+    pool.query(`SELECT * FROM ${process.env.DATABASE}.businesses;`, (error, result) => {
+      if (error) {
+        console.log(error)
+      }
+
+      res.json(result); 
+  })
+})
+
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
