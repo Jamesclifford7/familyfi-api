@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 
 // get all users
 app.get('/users', async (req, res) => {
-    pool.query(`SELECT * FROM ${process.env.DATABASE}.users;`, (error, result) => {
+    pool.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result) => {
         if (error) {
         console.log(error)
         }
@@ -46,7 +46,7 @@ app.get('/users', async (req, res) => {
 app.post('/login', (req, res) => {
     const {email, password} = req.body
     
-    pool.query(`SELECT * FROM ${process.env.DATABASE}.users WHERE email = '${email}' AND password = '${password}';`, (error, result) => {
+    pool.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users WHERE email = '${email}' AND password = '${password}';`, (error, result) => {
       if (error) {
         console.log(error)
       } else if (result.length === 0) {
@@ -89,7 +89,7 @@ app.get('/user', verifyToken, (req, res) => {
 // get marketplace data
 app.get('/marketplace', verifyToken, (req, res) => {
   
-    pool.query(`SELECT * FROM ${process.env.DATABASE}.businesses;`, (error, result) => {
+    pool.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.businesses;`, (error, result) => {
       if (error) {
         console.log(error)
       }
