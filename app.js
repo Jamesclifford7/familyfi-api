@@ -53,11 +53,11 @@ app.post('/login', (req, res) => {
         res.send('User not found')
       } else {
         // Generate JWT token
-        // const token = jwt.sign(result[0], process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+        const token = jwt.sign(result[0], process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
         
         res.json({
           // token: token, 
-          user: result[0]
+          user: result[0], 
         })
       }
     })
