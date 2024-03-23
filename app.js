@@ -56,7 +56,7 @@ app.post('/login', (req, res) => {
         const token = jwt.sign(result[0], process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
         
         res.json({
-          // token: token, 
+          token: token, 
           user: result[0], 
         })
       }
