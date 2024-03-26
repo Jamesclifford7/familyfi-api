@@ -5,9 +5,11 @@ const mysql = require('mysql2');
 require('dotenv').config()
 const validator = require('email-validator')
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 app.use(express.json());
 app.use(cors()); 
+
 
 const pool = mysql.createPool({
     host: process.env.CLEARDB_HOST,
@@ -95,6 +97,41 @@ app.get('/marketplace', verifyToken, (req, res) => {
       }
 
       res.json(result); 
+  })
+})
+
+// get deals for all categories and put into one object
+app.get('/deals', (req, res) => {
+
+  axios.all([ 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=baby&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=children's%20clothes&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=school%20supplies&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=sports%20equipment&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=home%20and%20bath&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=toys&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
+  ])  
+  .then(axios.spread((obj1, obj2, obj3, obj4, obj5, obj6) => {
+    const babyObj = {category: "Baby", ...obj1.shopping_results}
+    const clothesObj = {category: "Clothes", ...obj2.shopping_results}
+    const schoolObj = {category: "Education", ...obj3.shopping_results}
+    const sportsObj = {category: "Extracurricular", ...obj4.shopping_results}
+    const homeObj = {category: "Home", ...obj5.shopping_results}
+    const toysObj = {category: "Miscellaneous", ...obj6.shopping_results}
+
+    const resObject = {
+      ...babyObj, 
+      ...clothesObj, 
+      ...schoolObj, 
+      ...sportsObj, 
+      ...homeObj, 
+      ...toysObj, 
+    }; 
+
+    res.json(resObject); 
+  }))
+  .catch((error) => {
+    console.log(error)
   })
 })
 
