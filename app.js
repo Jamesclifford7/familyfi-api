@@ -101,34 +101,51 @@ app.get('/marketplace', verifyToken, (req, res) => {
 })
 
 // get deals for all categories and put into one object
-app.get('/deals', (req, res) => {
+app.get('/deals', verifyToken, (req, res) => {
 
   axios.all([ 
-    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=baby&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
-    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=children's%20clothes&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
-    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=school%20supplies&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
-    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=sports%20equipment&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
-    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=home%20and%20bath&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
-    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=toys&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`), 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=baby&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+    }), 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=children's%20clothes&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+    }), 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=school%20supplies&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+    }), 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=sports%20equipment&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+    }), 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=home%20and%20bath&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+    }), 
+    axios.get(`https://serpapi.com/search.json?engine=google_shopping&q=toys&api_key=${process.env.SERP_API_KEY}&tbs=sales:1`, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+    }), 
   ])  
   .then(axios.spread((obj1, obj2, obj3, obj4, obj5, obj6) => {
-    const babyObj = {category: "Baby", ...obj1.shopping_results}
-    const clothesObj = {category: "Clothes", ...obj2.shopping_results}
-    const schoolObj = {category: "Education", ...obj3.shopping_results}
-    const sportsObj = {category: "Extracurricular", ...obj4.shopping_results}
-    const homeObj = {category: "Home", ...obj5.shopping_results}
-    const toysObj = {category: "Miscellaneous", ...obj6.shopping_results}
+    const babyObj = {category: "Baby", deals: obj1.data.shopping_results.slice(0, 10)}
+    const clothesObj = {category: "Clothes", deals: obj2.data.shopping_results.slice(0, 10)}
+    const schoolObj = {category: "Education", deals: obj3.data.shopping_results.slice(0, 10)}
+    const sportsObj = {category: "Extracurricular", deals: obj4.data.shopping_results.slice(0, 10)}
+    const homeObj = {category: "Home", deals: obj5.data.shopping_results.slice(0, 10)}
+    const toysObj = {category: "Miscellaneous", deals: obj6.data.shopping_results.slice(0, 10)}
 
-    const resObject = {
-      ...babyObj, 
-      ...clothesObj, 
-      ...schoolObj, 
-      ...sportsObj, 
-      ...homeObj, 
-      ...toysObj, 
-    }; 
+    const responses = [babyObj, clothesObj, schoolObj, sportsObj, homeObj, toysObj]
 
-    res.json(resObject); 
+    res.json({results: responses}); 
   }))
   .catch((error) => {
     console.log(error)
