@@ -136,16 +136,16 @@ app.get('/deals', verifyToken, (req, res) => {
     }), 
   ])  
   .then(axios.spread((obj1, obj2, obj3, obj4, obj5, obj6) => {
-    const babyObj = {category: "Baby", deals: obj1.data.shopping_results.slice(0, 10)}
-    const clothesObj = {category: "Clothes", deals: obj2.data.shopping_results.slice(0, 10)}
-    const schoolObj = {category: "Education", deals: obj3.data.shopping_results.slice(0, 10)}
-    const sportsObj = {category: "Extracurricular", deals: obj4.data.shopping_results.slice(0, 10)}
-    const homeObj = {category: "Home", deals: obj5.data.shopping_results.slice(0, 10)}
-    const toysObj = {category: "Miscellaneous", deals: obj6.data.shopping_results.slice(0, 10)}
+    const babyObj = {"Baby": obj1.data.shopping_results.slice(0, 10)}
+    const clothesObj = {"Clothes": obj2.data.shopping_results.slice(0, 10)}
+    const schoolObj = {"Education": obj3.data.shopping_results.slice(0, 10)}
+    const sportsObj = {"Extracurricular": obj4.data.shopping_results.slice(0, 10)}
+    const homeObj = {"Home": obj5.data.shopping_results.slice(0, 10)}
+    const toysObj = {"Miscellaneous": obj6.data.shopping_results.slice(0, 10)}
 
     const responses = [babyObj, clothesObj, schoolObj, sportsObj, homeObj, toysObj]
 
-    res.json({results: responses}); 
+    res.json(responses); 
   }))
   .catch((error) => {
     console.log(error)
